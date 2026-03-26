@@ -61,7 +61,7 @@ def build_leader_card(
         height=_PORTRAIT_HEIGHT,
         bgcolor=SURFACE_DIM,
         border_radius=_PORTRAIT_RADIUS,
-        alignment=ft.alignment.center,
+        alignment=ft.Alignment.CENTER,
         content=body_text(f"[IMAGE: {name} portrait]", color=ON_SURFACE),
         opacity=1.0 if is_selected else 0.6,
     )

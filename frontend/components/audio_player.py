@@ -186,7 +186,7 @@ def build_audio_player(
     play_pause_button = ft.IconButton(
         content=play_icon,
         on_click=on_play_pause,
-        style=ft.ButtonStyle(padding=ft.padding.all(SPACING_SM)),
+        style=ft.ButtonStyle(padding=ft.Padding.all(SPACING_SM)),
     )
 
     row_1 = ft.Row(
@@ -210,7 +210,7 @@ def build_audio_player(
         style=ft.ButtonStyle(
             color=ACCENT_GOLD,
             side=ft.BorderSide(width=1, color=ACCENT_GOLD),
-            padding=ft.padding.symmetric(horizontal=SPACING_MD, vertical=SPACING_SM),
+            padding=ft.Padding.symmetric(horizontal=SPACING_MD, vertical=SPACING_SM),
             shape=ft.RoundedRectangleBorder(radius=8),
         ),
     )

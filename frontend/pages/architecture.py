@@ -57,7 +57,7 @@ def _build_pipeline_section() -> ft.Container:
                     height=36,
                     border_radius=18,
                     border=ft.border.all(2, ACCENT_GOLD),
-                    alignment=ft.alignment.center,
+                    alignment=ft.Alignment.CENTER,
                 ),
                 ft.Container(width=SPACING_MD),
                 ft.Container(
@@ -72,7 +72,7 @@ def _build_pipeline_section() -> ft.Container:
 
     return ft.Container(
         content=ft.Column(controls=step_controls, spacing=0),
-        padding=ft.padding.symmetric(horizontal=SPACING_XXL, vertical=SPACING_LG),
+        padding=ft.Padding.symmetric(horizontal=SPACING_XXL, vertical=SPACING_LG),
     )
 
 
@@ -111,7 +111,7 @@ def _build_tech_stack_section() -> ft.Container:
             ft.Container(
                 height=1,
                 bgcolor=DIVIDER,
-                margin=ft.margin.symmetric(vertical=SPACING_MD // 2),
+                margin=ft.Margin.symmetric(vertical=SPACING_MD // 2),
             ),
         )
 
@@ -120,7 +120,7 @@ def _build_tech_stack_section() -> ft.Container:
         bgcolor=SURFACE_DIM,
         border_radius=12,
         padding=SPACING_LG,
-        margin=ft.margin.symmetric(horizontal=SPACING_XXL),
+        margin=ft.Margin.symmetric(horizontal=SPACING_XXL),
     )
 
 
@@ -149,9 +149,9 @@ def build(page: ft.Page) -> list[ft.Control]:
         height=400,
         bgcolor=SURFACE_DIM,
         border_radius=12,
-        alignment=ft.alignment.center,
+        alignment=ft.Alignment.CENTER,
         content=body_text("[Architecture diagram placeholder]", color=ON_SURFACE),
-        margin=ft.margin.symmetric(
+        margin=ft.Margin.symmetric(
             horizontal=SPACING_XXL,
             vertical=SPACING_XL,
         ),

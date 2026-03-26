@@ -85,5 +85,5 @@ def build_nav_bar(page: ft.Page, active_route: str) -> ft.Container:
         content=nav_row,
         bgcolor=PRIMARY,
         height=64,
-        padding=ft.padding.symmetric(horizontal=SPACING_LG),
+        padding=ft.Padding.symmetric(horizontal=SPACING_LG),
     )

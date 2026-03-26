@@ -175,8 +175,8 @@ def build(page: ft.Page) -> list[ft.Control]:
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                 spacing=0,
             ),
-            alignment=ft.alignment.center,
-            padding=ft.padding.only(bottom=SPACING_LG),
+            alignment=ft.Alignment.CENTER,
+            padding=ft.Padding.only(bottom=SPACING_LG),
         )
 
     def build_zone_2() -> ft.Container:
@@ -198,8 +198,8 @@ def build(page: ft.Page) -> list[ft.Control]:
 
         return ft.Container(
             content=panel,
-            alignment=ft.alignment.center,
-            padding=ft.padding.only(top=SPACING_LG, bottom=SPACING_LG),
+            alignment=ft.Alignment.CENTER,
+            padding=ft.Padding.only(top=SPACING_LG, bottom=SPACING_LG),
         )
 
     def build_zone_3() -> ft.Container:
@@ -249,8 +249,8 @@ def build(page: ft.Page) -> list[ft.Control]:
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                 spacing=0,
             ),
-            alignment=ft.alignment.center,
-            padding=ft.padding.only(bottom=SPACING_XXL),
+            alignment=ft.Alignment.CENTER,
+            padding=ft.Padding.only(bottom=SPACING_XXL),
         )
 
     # -- Rebuild function ----------------------------------------------------
@@ -271,7 +271,7 @@ def build(page: ft.Page) -> list[ft.Control]:
                     padding=SPACING_MD,
                     border_radius=8,
                     width=600,
-                    alignment=ft.alignment.center,
+                    alignment=ft.Alignment.CENTER,
                 )
             )
 

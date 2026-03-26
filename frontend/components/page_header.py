@@ -49,6 +49,6 @@ def build_page_header(title: str, subtitle: str | None = None) -> ft.Container:
 
     return ft.Container(
         content=header_column,
-        alignment=ft.alignment.center,
-        padding=ft.padding.only(top=SPACING_XXL, bottom=SPACING_LG),
+        alignment=ft.Alignment.CENTER,
+        padding=ft.Padding.only(top=SPACING_XXL, bottom=SPACING_LG),
     )

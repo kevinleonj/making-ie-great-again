@@ -33,7 +33,7 @@ def _build_portrait_placeholder() -> ft.Container:
         bgcolor=SURFACE_DIM,
         border_radius=12,
         border=ft.border.all(1, DIVIDER),
-        alignment=ft.alignment.center,
+        alignment=ft.Alignment.CENTER,
         content=caption_text(
             "[IMAGE: Donald Trump official portrait 400x500]",
             color=ON_SURFACE,
@@ -134,7 +134,7 @@ def _build_key_facts_section() -> ft.Container:
         bgcolor=SURFACE_DIM,
         border_radius=12,
         padding=SPACING_LG,
-        margin=ft.margin.only(top=SPACING_XL),
+        margin=ft.Margin.only(top=SPACING_XL),
     )
 
 
@@ -171,7 +171,7 @@ def build(page: ft.Page) -> list[ft.Control]:
             vertical_alignment=ft.CrossAxisAlignment.START,
             expand=True,
         ),
-        padding=ft.padding.symmetric(horizontal=SPACING_XXL, vertical=SPACING_LG),
+        padding=ft.Padding.symmetric(horizontal=SPACING_XXL, vertical=SPACING_LG),
     )
 
     return [header, content_row]

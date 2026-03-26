@@ -157,7 +157,7 @@ def build_text_input_panel(
             border=ft.border.only(
                 left=ft.BorderSide(_QUOTE_BORDER_WIDTH, ACCENT_GOLD),
             ),
-            border_radius=ft.border_radius.only(
+            border_radius=ft.BorderRadius.only(
                 top_right=_BORDER_RADIUS,
                 bottom_right=_BORDER_RADIUS,
             ),
@@ -174,5 +174,5 @@ def build_text_input_panel(
         ),
         width=_MAX_WIDTH,
         padding=SPACING_LG,
-        alignment=ft.alignment.center,
+        alignment=ft.Alignment.CENTER,
     )
