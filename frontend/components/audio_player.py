@@ -85,10 +85,12 @@ def build_audio_player(
 
     # -- UI controls that need updating ---------------------------------------
 
-    play_icon = ft.Icon(
-        name=ft.Icons.PLAY_ARROW,
-        color=ACCENT_GOLD,
-        size=_ICON_SIZE,
+    play_pause_button = ft.IconButton(
+        icon=ft.Icons.PLAY_ARROW,
+        icon_color=ACCENT_GOLD,
+        icon_size=_ICON_SIZE,
+        on_click=lambda _e: on_play_pause(_e),
+        padding=ft.Padding.all(SPACING_SM),
     )
 
     progress_text = ft.Text(
@@ -99,7 +101,7 @@ def build_audio_player(
     )
 
     volume_icon = ft.Icon(
-        name=ft.Icons.VOLUME_UP,
+        icon=ft.Icons.VOLUME_UP,
         color=ACCENT_GOLD,
         size=_ICON_SIZE - 4,
     )
@@ -111,16 +113,16 @@ def build_audio_player(
         logger.debug("Audio state changed: %s", e.state)
         if e.state == fta.AudioState.PLAYING:
             is_playing[0] = True
-            play_icon.name = ft.Icons.PAUSE
+            play_pause_button.icon = ft.Icons.PAUSE
         elif e.state in (
             fta.AudioState.PAUSED,
             fta.AudioState.STOPPED,
             fta.AudioState.COMPLETED,
         ):
             is_playing[0] = False
-            play_icon.name = ft.Icons.PLAY_ARROW
+            play_pause_button.icon = ft.Icons.PLAY_ARROW
         try:
-            play_icon.update()
+            play_pause_button.update()
         except Exception:
             logger.debug("Could not update play icon (control may not be mounted)")
 
@@ -183,12 +185,6 @@ def build_audio_player(
 
     # -- Visual layout --------------------------------------------------------
 
-    play_pause_button = ft.IconButton(
-        content=play_icon,
-        on_click=on_play_pause,
-        style=ft.ButtonStyle(padding=ft.Padding.all(SPACING_SM)),
-    )
-
     row_1 = ft.Row(
         controls=[
             play_pause_button,
@@ -203,7 +199,7 @@ def build_audio_player(
     )
 
     download_button = ft.TextButton(
-        text="Download WAV",
+        content="Download WAV",
         icon=ft.Icons.DOWNLOAD,
         icon_color=ACCENT_GOLD,
         on_click=on_download,
