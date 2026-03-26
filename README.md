@@ -1,6 +1,6 @@
 # MakingIEGreatAgain
 
-Voice cloning demo powered by Flet, FastAPI, Claude API, and mlx-audio.
+Voice cloning demo powered by Flet, FastAPI, Claude API, and fal.ai F5-TTS.
 
 ## Architecture
 
@@ -17,8 +17,8 @@ Voice cloning demo powered by Flet, FastAPI, Claude API, and mlx-audio.
         |  1. Enter text                         +-------> Claude API
         |  2. Select a leader                    |         (text transformation)
         |  3. Click "Transform"                  |
-        |  4. Review transformed text            +-------> mlx-audio TTS
-        |  5. Generate voice audio               |         (Qwen3-TTS model)
+        |  4. Review transformed text            +-------> fal.ai F5-TTS
+        |  5. Generate voice audio               |         (cloud voice cloning)
         |  6. Play cloned audio                  |
         |                                        v
         |                               +-------------------+
@@ -27,12 +27,12 @@ Voice cloning demo powered by Flet, FastAPI, Claude API, and mlx-audio.
                                         +-------------------+
 ```
 
-**Data flow:** User enters text and selects a political leader. The backend sends the text to the Claude API, which rewrites it in the leader's speaking style using a custom metaprompt. The rewritten text is then passed to mlx-audio's Qwen3-TTS engine, which generates speech using a reference audio clip of the leader's voice. The frontend streams the resulting WAV file for playback.
+**Data flow:** User enters text and selects a political leader. The backend sends the text to the Claude API, which rewrites it in the leader's speaking style using a custom metaprompt. The rewritten text is then passed to the fal.ai F5-TTS cloud API, which generates speech using a pre-uploaded reference audio clip of the leader's voice. The frontend streams the resulting WAV file for playback.
 
 ## Prerequisites
 
 - Python 3.11 or later
-- Apple Silicon Mac (M1/M2/M3/M4) for mlx-audio inference
+- A fal.ai API key for F5-TTS voice cloning
 - An Anthropic API key with access to Claude
 
 ## Setup
@@ -47,10 +47,16 @@ cd making-ie-great-again
 
 ```bash
 cp .env.example .env
-# Edit .env and set ANTHROPIC_API_KEY=sk-ant-...
+# Edit .env and set ANTHROPIC_API_KEY=sk-ant-... and FAL_KEY=...
 ```
 
-3. Place reference audio files (WAV format) for each leader in the `data/` directory. Expected filenames are defined in `backend/config.py`.
+3. Place reference audio files (WAV format) for each leader in the `data/` directory, then upload them to fal CDN:
+
+```bash
+FAL_KEY=your-key python scripts/upload_ref_audio.py
+```
+
+This creates `data/fal_audio_urls.json` with the CDN URLs used by the TTS service.
 
 4. Install all dependencies:
 
@@ -110,7 +116,7 @@ making-ie-great-again/
       tts.py               # TTS generation and audio serving endpoints
     services/
       llm_service.py       # Claude API integration
-      tts_service.py       # mlx-audio TTS integration
+      tts_service.py       # fal.ai F5-TTS integration
   frontend/                # Flet web application
     config.py              # Frontend configuration
     main.py                # Flet app entry point

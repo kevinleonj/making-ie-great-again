@@ -4,7 +4,7 @@
 - **Frontend**: Flet 0.80.5 (Python, runs as web app on port 8550)
 - **Backend**: FastAPI (Python, runs on port 8000)
 - **Communication**: HTTP (httpx client in frontend calling backend REST API)
-- **TTS Engine**: mlx-audio with Qwen3-TTS (local Apple Silicon inference)
+- **TTS Engine**: fal.ai F5-TTS (cloud API)
 - **LLM**: Claude API via anthropic Python SDK
 
 ## Commands

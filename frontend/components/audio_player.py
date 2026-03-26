@@ -6,6 +6,7 @@ import logging
 
 import flet as ft
 import flet_audio as fta
+from flet.controls.services.url_launcher import UrlLauncher
 
 from frontend.theme import (
     ACCENT_GOLD,
@@ -66,13 +67,13 @@ def build_audio_player(
 ) -> ft.Container:
     """Build an inline audio player with play/pause and download.
 
-    Creates a non-visual fta.Audio control (added to page.overlay) and
-    returns a visible Container with playback controls and a download
-    button.
+    Creates a non-visual fta.Audio service control (auto-registered via
+    the page service registry) and returns a visible Container with
+    playback controls and a download button.
 
     Args:
         audio_url: Full URL to the WAV audio file.
-        page: Flet page (needed for adding audio control to overlay).
+        page: Flet page (needed for page context).
 
     Returns:
         A Container with playback controls and download button.
@@ -89,7 +90,6 @@ def build_audio_player(
         icon=ft.Icons.PLAY_ARROW,
         icon_color=ACCENT_GOLD,
         icon_size=_ICON_SIZE,
-        on_click=lambda _e: on_play_pause(_e),
         padding=ft.Padding.all(SPACING_SM),
     )
 
@@ -149,7 +149,7 @@ def build_audio_player(
         except Exception:
             logger.debug("Could not update progress text (control may not be mounted)")
 
-    # -- Audio control (non-visual, added to page overlay) --------------------
+    # -- Audio control (Service, auto-registered via page service registry) ----
 
     audio = fta.Audio(
         src=audio_url,
@@ -160,9 +160,6 @@ def build_audio_player(
         on_position_change=on_position_change,
         on_duration_change=on_duration_change,
     )
-
-    page.overlay.append(audio)
-    page.update()
 
     # -- Play/Pause click handler ---------------------------------------------
 
@@ -176,12 +173,20 @@ def build_audio_player(
         except Exception:
             logger.exception("Playback control error")
 
+    # Bug 3 fix: Assign the async handler directly so Flet can detect it as a
+    # coroutine function via inspect.iscoroutinefunction() and await it.
+    # A lambda wrapper would mask the async nature and return an unawaited coroutine.
+    play_pause_button.on_click = on_play_pause
+
     # -- Download click handler -----------------------------------------------
 
-    def on_download(_e: ft.ControlEvent) -> None:
+    async def on_download(_e: ft.ControlEvent) -> None:
         """Open the audio URL to trigger download."""
         logger.debug("Download requested: %s", audio_url)
-        page.launch_url(audio_url)
+        try:
+            await UrlLauncher().launch_url(audio_url)
+        except Exception:
+            logger.exception("Failed to launch download URL")
 
     # -- Visual layout --------------------------------------------------------
 

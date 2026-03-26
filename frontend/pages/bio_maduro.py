@@ -31,11 +31,10 @@ def _build_portrait() -> ft.Container:
         border_radius=12,
         border=ft.border.all(1, DIVIDER),
         clip_behavior=ft.ClipBehavior.ANTI_ALIAS,
-        content=ft.Image(
+        image=ft.DecorationImage(
             src="Maduro.jpg",
-            width=400,
-            height=500,
             fit=ft.BoxFit.COVER,
+            alignment=ft.Alignment.TOP_CENTER,
         ),
     )
 

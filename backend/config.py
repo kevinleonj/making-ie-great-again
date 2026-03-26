@@ -38,9 +38,8 @@ class BackendSettings:
     anthropic_model: str = field(
         default_factory=lambda: _env("ANTHROPIC_MODEL", "claude-sonnet-4-20250514")
     )
-    tts_model_id: str = field(
-        default_factory=lambda: _env("TTS_MODEL_ID", "mlx-community/Qwen3-TTS-12Hz-0.6B-Base-bf16")
-    )
+    fal_key: str = field(default_factory=lambda: _env("FAL_KEY", ""))
+    fal_tts_model: str = field(default_factory=lambda: _env("FAL_TTS_MODEL", "fal-ai/f5-tts"))
     tts_mock: bool = field(default_factory=lambda: _env_bool("TTS_MOCK", False))
     audio_output_dir: str = field(default_factory=lambda: _env("AUDIO_OUTPUT_DIR", "output"))
     data_dir: str = field(default_factory=lambda: _env("DATA_DIR", "data"))

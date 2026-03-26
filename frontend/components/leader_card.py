@@ -54,17 +54,17 @@ def build_leader_card(
         A styled Container acting as a selectable card.
     """
     # -- Portrait image ------------------------------------------------------
+    image_file = name.split()[-1] + ".jpg"
     portrait = ft.Container(
         width=_PORTRAIT_WIDTH,
         height=_PORTRAIT_HEIGHT,
         border_radius=_PORTRAIT_RADIUS,
         clip_behavior=ft.ClipBehavior.ANTI_ALIAS,
         opacity=1.0 if is_selected else 0.6,
-        content=ft.Image(
-            src=name.split()[-1] + ".jpg",
-            width=_PORTRAIT_WIDTH,
-            height=_PORTRAIT_HEIGHT,
+        image=ft.DecorationImage(
+            src=image_file,
             fit=ft.BoxFit.COVER,
+            alignment=ft.Alignment.TOP_CENTER,
         ),
     )
 

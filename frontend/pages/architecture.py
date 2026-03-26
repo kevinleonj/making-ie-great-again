@@ -30,10 +30,7 @@ def _build_pipeline_section() -> ft.Container:
         "User types text in the frontend interface",
         "Text is sent to the FastAPI backend via HTTP",
         ("Claude API transforms the text into the selected leader's speaking style and language"),
-        (
-            "The transformed text is sent to mlx audio Qwen3 TTS"
-            " for voice synthesis on Apple Silicon"
-        ),
+        "The transformed text is sent to fal.ai F5-TTS for voice synthesis via cloud API",
         "Generated WAV audio is returned to the frontend for playback",
     ]
 
@@ -86,7 +83,7 @@ def _build_tech_stack_section() -> ft.Container:
         ("Frontend", "Flet 0.80.5 (Python)"),
         ("Backend", "FastAPI (Python)"),
         ("LLM", "Claude API (Anthropic)"),
-        ("TTS", "mlx audio with Qwen3 TTS (Apple Silicon)"),
+        ("TTS", "fal.ai F5-TTS (cloud API)"),
         ("Communication", "HTTP / REST"),
     ]
 

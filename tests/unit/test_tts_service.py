@@ -20,7 +20,8 @@ def test_mock_generation(tmp_path: Path) -> None:
     (data_dir / "maduro_transcript.txt").write_text("Transcripcion de prueba")
 
     service = TTSService(
-        model_id="test-model",
+        fal_key="test-key",
+        fal_tts_model="fal-ai/f5-tts",
         data_dir=data_dir,
         output_dir=output_dir,
         mock=True,
@@ -42,7 +43,8 @@ def test_mock_generation_maduro(tmp_path: Path) -> None:
     (data_dir / "maduro_transcript.txt").write_text("Prueba")
 
     service = TTSService(
-        model_id="test-model",
+        fal_key="test-key",
+        fal_tts_model="fal-ai/f5-tts",
         data_dir=data_dir,
         output_dir=tmp_path / "output",
         mock=True,
@@ -61,7 +63,8 @@ def test_unknown_leader_raises(tmp_path: Path) -> None:
     (data_dir / "maduro_transcript.txt").write_text("Prueba")
 
     service = TTSService(
-        model_id="test-model",
+        fal_key="test-key",
+        fal_tts_model="fal-ai/f5-tts",
         data_dir=data_dir,
         output_dir=tmp_path / "output",
         mock=True,
@@ -80,7 +83,8 @@ def test_output_dir_created(tmp_path: Path) -> None:
 
     output_dir = tmp_path / "output" / "nested"
     TTSService(
-        model_id="test-model",
+        fal_key="test-key",
+        fal_tts_model="fal-ai/f5-tts",
         data_dir=data_dir,
         output_dir=output_dir,
         mock=True,
