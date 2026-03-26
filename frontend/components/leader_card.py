@@ -15,8 +15,6 @@ from frontend.theme import (
     SPACING_LG,
     SPACING_MD,
     SURFACE,
-    SURFACE_DIM,
-    body_text,
     caption_text,
     heading_text,
 )
@@ -55,15 +53,19 @@ def build_leader_card(
     Returns:
         A styled Container acting as a selectable card.
     """
-    # -- Portrait placeholder ------------------------------------------------
-    portrait_placeholder = ft.Container(
+    # -- Portrait image ------------------------------------------------------
+    portrait = ft.Container(
         width=_PORTRAIT_WIDTH,
         height=_PORTRAIT_HEIGHT,
-        bgcolor=SURFACE_DIM,
         border_radius=_PORTRAIT_RADIUS,
-        alignment=ft.Alignment.CENTER,
-        content=body_text(f"[IMAGE: {name} portrait]", color=ON_SURFACE),
+        clip_behavior=ft.ClipBehavior.ANTI_ALIAS,
         opacity=1.0 if is_selected else 0.6,
+        content=ft.Image(
+            src=name.split()[-1] + ".jpg",
+            width=_PORTRAIT_WIDTH,
+            height=_PORTRAIT_HEIGHT,
+            fit=ft.BoxFit.COVER,
+        ),
     )
 
     # -- Name and language labels --------------------------------------------
@@ -76,7 +78,7 @@ def build_leader_card(
     # -- Card content column -------------------------------------------------
     card_column = ft.Column(
         controls=[
-            portrait_placeholder,
+            portrait,
             ft.Container(height=SPACING_MD),
             name_label,
             lang_label,

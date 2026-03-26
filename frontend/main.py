@@ -64,4 +64,9 @@ def main(page: ft.Page) -> None:
 
 if __name__ == "__main__":
     _settings = get_settings()
-    ft.run(main, view=ft.AppView.WEB_BROWSER, port=_settings.frontend_port)
+    ft.run(
+        main,
+        view=ft.AppView.WEB_BROWSER,
+        port=_settings.frontend_port,
+        assets_dir="assets",
+    )

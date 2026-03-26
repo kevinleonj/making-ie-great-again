@@ -1,4 +1,4 @@
-"""Maduro biography page view with portrait placeholder, biography, and key facts."""
+"""Maduro biography page view with portrait, biography, and key facts."""
 
 from __future__ import annotations
 
@@ -8,35 +8,34 @@ from frontend.components.page_header import build_page_header
 from frontend.theme import (
     ACCENT_GOLD,
     DIVIDER,
-    ON_SURFACE,
     SPACING_LG,
     SPACING_MD,
     SPACING_XL,
     SPACING_XXL,
     SURFACE_DIM,
     body_text,
-    caption_text,
     heading_text,
     subheading_text,
 )
 
 
-def _build_portrait_placeholder() -> ft.Container:
-    """Build a placeholder container for the Maduro official portrait.
+def _build_portrait() -> ft.Container:
+    """Build the Maduro official portrait container.
 
     Returns:
-        A styled placeholder container at 400x500 pixels.
+        A Container with the Maduro portrait image at 400x500 pixels.
     """
     return ft.Container(
         width=400,
         height=500,
-        bgcolor=SURFACE_DIM,
         border_radius=12,
         border=ft.border.all(1, DIVIDER),
-        alignment=ft.Alignment.CENTER,
-        content=caption_text(
-            "[IMAGE: Nicolas Maduro official portrait 400x500]",
-            color=ON_SURFACE,
+        clip_behavior=ft.ClipBehavior.ANTI_ALIAS,
+        content=ft.Image(
+            src="Maduro.jpg",
+            width=400,
+            height=500,
+            fit=ft.BoxFit.COVER,
         ),
     )
 
@@ -154,7 +153,7 @@ def build(page: ft.Page) -> list[ft.Control]:
         subtitle="President of Venezuela",
     )
 
-    portrait = _build_portrait_placeholder()
+    portrait = _build_portrait()
     bio_section = _build_biography_section()
     facts_section = _build_key_facts_section()
 

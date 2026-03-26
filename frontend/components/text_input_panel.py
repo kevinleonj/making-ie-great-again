@@ -60,40 +60,17 @@ def build_text_input_panel(
         A Container with text input, character counter, transform button, and result.
     """
 
-    # -- Text change handler -------------------------------------------------
-    def handle_text_change(e: ft.ControlEvent) -> None:
-        """Forward text changes, enforcing max length."""
-        value = e.control.value or ""
-        if len(value) > max_length:
-            value = value[:max_length]
-            e.control.value = value
-            e.control.update()
-        on_text_change(value)
-
     # -- Transform click handler ---------------------------------------------
     def handle_transform(_e: ft.ControlEvent) -> None:
         """Delegate to the on_transform callback."""
         logger.debug("Transform button clicked for leader: %s", leader_name)
         on_transform()
 
-    # -- Text input field ----------------------------------------------------
-    text_field = ft.TextField(
-        value=current_text,
-        multiline=True,
-        min_lines=_TEXTFIELD_MIN_LINES,
-        max_lines=_TEXTFIELD_MAX_LINES,
-        hint_text=f"Type what you want {leader_name} to say...",
-        border_color=DIVIDER,
-        focused_border_color=ACCENT_GOLD,
-        on_change=handle_text_change,
-    )
-
     # -- Character counter ---------------------------------------------------
     char_count = len(current_text)
+    counter_label = caption_text(f"{char_count}/{max_length}")
     counter_row = ft.Row(
-        controls=[
-            caption_text(f"{char_count}/{max_length}"),
-        ],
+        controls=[counter_label],
         alignment=ft.MainAxisAlignment.END,
     )
 
@@ -131,6 +108,33 @@ def build_text_input_panel(
         bgcolor=ACCENT_GOLD,
         disabled=button_disabled,
         on_click=handle_transform,
+    )
+
+    # -- Text change handler -------------------------------------------------
+    def handle_text_change(e: ft.ControlEvent) -> None:
+        """Forward text changes, enforcing max length."""
+        value = e.control.value or ""
+        if len(value) > max_length:
+            value = value[:max_length]
+            e.control.value = value
+            e.control.update()
+        on_text_change(value)
+        # Update counter and button state in-place (no rebuild needed)
+        counter_label.value = f"{len(value)}/{max_length}"
+        counter_label.update()
+        transform_button.disabled = len(value.strip()) == 0 or is_transforming
+        transform_button.update()
+
+    # -- Text input field ----------------------------------------------------
+    text_field = ft.TextField(
+        value=current_text,
+        multiline=True,
+        min_lines=_TEXTFIELD_MIN_LINES,
+        max_lines=_TEXTFIELD_MAX_LINES,
+        hint_text=f"Type what you want {leader_name} to say...",
+        border_color=DIVIDER,
+        focused_border_color=ACCENT_GOLD,
+        on_change=handle_text_change,
     )
 
     button_row = ft.Row(

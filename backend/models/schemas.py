@@ -27,7 +27,7 @@ class TTSRequest(BaseModel):
     """Request body for TTS generation."""
 
     leader: Literal["trump", "maduro"]
-    text: str = Field(..., min_length=1, max_length=500)
+    text: str = Field(..., min_length=1, max_length=5000)
 
 
 class TTSResponse(BaseModel):
