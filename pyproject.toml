@@ -1,0 +1,58 @@
+[build-system]
+requires = ["setuptools>=75.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["frontend*", "backend*"]
+
+[project]
+name = "making-ie-great-again"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = [
+    "flet==0.80.5",
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.34.0",
+    "httpx>=0.28.0",
+    "anthropic>=0.52.0",
+    "python-dotenv>=1.0.0",
+    "pydantic>=2.10.0",
+    "soundfile>=0.13.0",
+    "numpy>=2.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.26.0",
+    "pytest-playwright>=0.7.0",
+    "playwright>=1.50.0",
+    "ruff>=0.9.0",
+    "mypy>=1.14.0",
+    "coverage>=7.6.0",
+]
+tts = [
+    "mlx-audio>=0.2.0",
+    "librosa>=0.10.0",
+]
+audio = [
+    "flet-audio==0.80.5",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "UP", "B", "SIM"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+asyncio_default_test_loop_scope = "session"

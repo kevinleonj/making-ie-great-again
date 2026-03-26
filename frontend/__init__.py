@@ -1,0 +1,1 @@
+"""MakingIEGreatAgain frontend package."""
