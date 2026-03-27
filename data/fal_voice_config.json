@@ -1,0 +1,12 @@
+{
+  "trump": {
+    "audio_url": "https://v3b.fal.media/files/b/0a93c7e6/_g9TcTtxDufvWaQrTCtX-_trump_30s.wav",
+    "embedding_url": "https://v3b.fal.media/files/b/0a93c7eb/KnkV7kZJd-l7ZtsDDUmeQ_tmpfqz3nhid.safetensors",
+    "reference_text": "The USA is the economic engine on the planet, and when America booms, the entire world booms. It's been the history. When it goes bad, it goes bad. The whole we all, you'll follow us down, and you follow us up, and we're at a point that we've never\u2014I don't believe we've ever been. I never thought we could do it this quickly. My biggest surprise is I thought it would take more than a year, maybe like a year and one month instead of building ineffective, money losing windmills."
+  },
+  "maduro": {
+    "audio_url": "https://v3b.fal.media/files/b/0a93c7ec/HiQ3L5NPrF2ua1apQseb__maduro_30s.wav",
+    "embedding_url": "https://v3b.fal.media/files/b/0a93c7f1/Ah4zxlN77Sb3XWR3ty4-W_tmpq1zmr45d.safetensors",
+    "reference_text": "Y nos blindan a nuestro pa\u00eds en su camino hacia el futuro. Los n\u00fameros de crecimiento de nuestra econom\u00eda real en condiciones de asedio, ataque y bloqueo imperialista confirman una verdad mayor: vamos superando el cerco impuesto hace una d\u00e9cada y estamos en condiciones \u00f3ptimas de enfrentar."
+  }
+}

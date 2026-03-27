@@ -1,4 +1,4 @@
-"""TTS service using fal.ai F5-TTS for voice cloning."""
+"""TTS service using fal.ai Qwen3-TTS for voice cloning."""
 
 from __future__ import annotations
 
@@ -32,18 +32,16 @@ class TTSResult:
 
 _VOICE_CONFIG: dict[str, dict[str, str]] = {
     "trump": {
-        "ref_transcript": "trump_transcript.txt",
-        "lang_code": "english",
+        "language": "English",
     },
     "maduro": {
-        "ref_transcript": "maduro_transcript.txt",
-        "lang_code": "spanish",
+        "language": "Spanish",
     },
 }
 
 
 class TTSService:
-    """Text-to-speech service using fal.ai F5-TTS.
+    """Text-to-speech service using fal.ai Qwen3-TTS.
 
     Calls the fal.ai cloud API for voice cloning and saves the
     resulting audio locally. Supports a mock mode for testing
@@ -63,12 +61,10 @@ class TTSService:
         self._data_dir = data_dir
         self._output_dir = output_dir
         self._mock = mock
-        self._transcripts: dict[str, str] = {}
-        self._ref_audio_urls: dict[str, str] = {}
+        self._voice_configs: dict[str, dict[str, str]] = {}
 
         self._output_dir.mkdir(parents=True, exist_ok=True)
-        self._load_transcripts()
-        self._load_ref_audio_urls()
+        self._load_voice_config()
         self._configure_fal_key()
 
     def _configure_fal_key(self) -> None:
@@ -76,31 +72,21 @@ class TTSService:
         if self._fal_key and not self._mock:
             os.environ["FAL_KEY"] = self._fal_key
 
-    def _load_transcripts(self) -> None:
-        """Load reference transcripts from data directory."""
-        for leader, config in _VOICE_CONFIG.items():
-            transcript_path = self._data_dir / config["ref_transcript"]
-            if transcript_path.exists():
-                self._transcripts[leader] = transcript_path.read_text(encoding="utf-8").strip()
-                logger.info(
-                    "Loaded transcript for %s (%d chars)",
-                    leader,
-                    len(self._transcripts[leader]),
-                )
-            else:
-                logger.warning("Transcript not found: %s", transcript_path)
-
-    def _load_ref_audio_urls(self) -> None:
-        """Load pre-uploaded fal CDN URLs for reference audio."""
-        urls_file = self._data_dir / "fal_audio_urls.json"
-        if urls_file.exists():
-            data = json.loads(urls_file.read_text(encoding="utf-8"))
-            self._ref_audio_urls = {k: str(v) for k, v in data.items()}
-            logger.info("Loaded %d fal audio URLs", len(self._ref_audio_urls))
+    def _load_voice_config(self) -> None:
+        """Load pre-generated voice config with embeddings and reference text."""
+        config_file = self._data_dir / "fal_voice_config.json"
+        if config_file.exists():
+            data = json.loads(config_file.read_text(encoding="utf-8"))
+            for leader, config in data.items():
+                self._voice_configs[leader] = {
+                    "embedding_url": str(config["embedding_url"]),
+                    "reference_text": str(config["reference_text"]),
+                }
+            logger.info("Loaded voice configs for %d leaders", len(self._voice_configs))
         else:
             if not self._mock:
                 logger.warning(
-                    "fal_audio_urls.json not found in %s. "
+                    "fal_voice_config.json not found in %s. "
                     "Run scripts/upload_ref_audio.py first.",
                     self._data_dir,
                 )
@@ -135,16 +121,18 @@ class TTSService:
             TTSResult with file path and metadata.
 
         Raises:
-            ValueError: If leader is unknown or transcript missing.
+            ValueError: If leader is unknown or voice config missing.
             RuntimeError: If generation fails.
         """
         voice = _VOICE_CONFIG.get(leader)
         if voice is None:
             raise ValueError(f"Unknown leader: {leader}")
 
-        transcript = self._transcripts.get(leader)
-        if not transcript:
-            raise ValueError(f"No transcript loaded for {leader}")
+        voice_config = self._voice_configs.get(leader)
+        if not voice_config or not voice_config.get("reference_text"):
+            raise ValueError(
+                f"No voice config for {leader}. Run scripts/upload_ref_audio.py first."
+            )
 
         filename = f"{leader}_{uuid.uuid4().hex[:8]}.wav"
         output_path = self._output_dir / filename
@@ -152,7 +140,7 @@ class TTSService:
         if self._mock:
             return self._generate_mock(output_path, filename)
 
-        return self._generate_real(leader, text, transcript, output_path, filename)
+        return self._generate_real(leader, text, voice_config, output_path, filename)
 
     def _generate_mock(self, output_path: Path, filename: str) -> TTSResult:
         """Generate a mock silent WAV file for testing."""
@@ -172,35 +160,30 @@ class TTSService:
         self,
         leader: str,
         text: str,
-        transcript: str,
+        voice_config: dict[str, str],
         output_path: Path,
         filename: str,
     ) -> TTSResult:
-        """Generate real TTS audio using fal.ai F5-TTS API."""
-        ref_audio_url = self._ref_audio_urls.get(leader)
-        if not ref_audio_url:
-            raise ValueError(
-                f"No fal audio URL for {leader}. Run scripts/upload_ref_audio.py first."
-            )
+        """Generate real TTS audio using fal.ai Qwen3-TTS API."""
+        voice = _VOICE_CONFIG[leader]
 
-        logger.info("Generating TTS via fal.ai for %s: %s", leader, text[:80])
+        logger.info("Generating TTS via fal.ai Qwen3-TTS for %s: %s", leader, text[:80])
         start = time.time()
 
         try:
             result = fal_client.subscribe(
                 self._fal_tts_model,
                 arguments={
-                    "gen_text": text,
-                    "ref_audio_url": ref_audio_url,
-                    "ref_text": transcript,
-                    "model_type": "F5-TTS",
-                    "remove_silence": True,
+                    "text": text,
+                    "language": voice["language"],
+                    "speaker_voice_embedding_file_url": voice_config["embedding_url"],
+                    "reference_text": voice_config["reference_text"],
                 },
             )
         except Exception as exc:
             raise RuntimeError(f"fal.ai TTS call failed: {exc}") from exc
 
-        audio_url = result["audio_url"]["url"]
+        audio_url = result["audio"]["url"]
         logger.info("fal.ai returned audio URL: %s", audio_url)
 
         try:

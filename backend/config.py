@@ -39,7 +39,9 @@ class BackendSettings:
         default_factory=lambda: _env("ANTHROPIC_MODEL", "claude-sonnet-4-20250514")
     )
     fal_key: str = field(default_factory=lambda: _env("FAL_KEY", ""))
-    fal_tts_model: str = field(default_factory=lambda: _env("FAL_TTS_MODEL", "fal-ai/f5-tts"))
+    fal_tts_model: str = field(
+        default_factory=lambda: _env("FAL_TTS_MODEL", "fal-ai/qwen-3-tts/text-to-speech/1.7b")
+    )
     tts_mock: bool = field(default_factory=lambda: _env_bool("TTS_MOCK", False))
     audio_output_dir: str = field(default_factory=lambda: _env("AUDIO_OUTPUT_DIR", "output"))
     data_dir: str = field(default_factory=lambda: _env("DATA_DIR", "data"))

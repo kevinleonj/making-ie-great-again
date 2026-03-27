@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import logging
 
 from fastapi import APIRouter, HTTPException
@@ -27,7 +28,7 @@ async def generate_tts(request: TTSRequest) -> TTSResponse:
     """
     try:
         service = get_tts_service()
-        result = service.generate(request.leader, request.text)
+        result = await asyncio.to_thread(service.generate, request.leader, request.text)
         audio_url = f"/api/audio/{result.filename}"
 
         return TTSResponse(

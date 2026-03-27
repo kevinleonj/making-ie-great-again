@@ -125,11 +125,9 @@ def build(page: ft.Page) -> list[ft.Control]:
             client = get_api_client()
             result = client.generate_tts(state.selected_leader, state.transformed_text)
             state.audio_url = client.get_audio_url(result.audio_url)
-        except Exception:
+        except Exception as exc:
             logger.exception("TTS API call failed")
-            state.error_message = (
-                "Could not generate audio. Please check that the backend is running and try again."
-            )
+            state.error_message = f"Audio generation failed: {exc}"
             state.audio_url = None
         finally:
             state.is_generating = False

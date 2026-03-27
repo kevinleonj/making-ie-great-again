@@ -42,7 +42,7 @@ class APIClient:
         if base_url is None:
             base_url = get_settings().backend_url
         self._base_url = base_url
-        self._client = httpx.Client(base_url=base_url, timeout=60.0)
+        self._client = httpx.Client(base_url=base_url, timeout=180.0)
 
     def transform_text(self, leader: str, text: str) -> TransformResult:
         """Transform text into a leader's speaking style.
