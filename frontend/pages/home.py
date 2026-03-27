@@ -278,8 +278,6 @@ def build(page: ft.Page) -> list[ft.Control]:
 
     def _populate() -> None:
         """Populate the content column from current state."""
-        page.overlay.clear()
-        page.update()
         content_column.controls.clear()
         header = build_page_header(title="MakingIEGreatAgain", subtitle="Voice Cloning Demo")
         content_column.controls.extend([header, build_zone_1(), build_zone_2(), build_zone_3()])

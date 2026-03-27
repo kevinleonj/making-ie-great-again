@@ -190,6 +190,10 @@ class TTSService:
             with httpx.Client(timeout=60.0) as client:
                 response = client.get(audio_url)
                 response.raise_for_status()
+                content_type = response.headers.get("content-type", "")
+                if "mpeg" in content_type or audio_url.endswith(".mp3"):
+                    filename = filename.replace(".wav", ".mp3")
+                    output_path = self._output_dir / filename
                 output_path.write_bytes(response.content)
         except httpx.HTTPError as exc:
             raise RuntimeError(f"Failed to download generated audio: {exc}") from exc

@@ -34,9 +34,6 @@ dev = [
 tts = [
     "fal-client>=0.5.0",
 ]
-audio = [
-    "flet-audio==0.80.5",
-]
 
 [tool.ruff]
 line-length = 100
