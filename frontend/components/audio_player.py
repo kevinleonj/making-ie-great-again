@@ -67,9 +67,9 @@ def build_audio_player(
 ) -> ft.Container:
     """Build an inline audio player with play/pause and download.
 
-    Creates a non-visual fta.Audio service control (auto-registered via
-    the page service registry) and returns a visible Container with
-    playback controls and a download button.
+    Creates a non-visual fta.Audio control, appends it to page.overlay
+    so the Flutter engine creates the underlying audio element, and
+    returns a visible Container with playback controls and a download button.
 
     Args:
         audio_url: Full URL to the WAV audio file.
@@ -149,7 +149,7 @@ def build_audio_player(
         except Exception:
             logger.debug("Could not update progress text (control may not be mounted)")
 
-    # -- Audio control (Service, auto-registered via page service registry) ----
+    # -- Audio control (must be added to page.overlay for playback) -----------
 
     audio = fta.Audio(
         src=audio_url,
@@ -160,6 +160,10 @@ def build_audio_player(
         on_position_change=on_position_change,
         on_duration_change=on_duration_change,
     )
+
+    # Audio must be in page.overlay for the Flutter engine to create the
+    # underlying platform audio element.  Without this, play() is a no-op.
+    page.overlay.append(audio)
 
     # -- Play/Pause click handler ---------------------------------------------
 
