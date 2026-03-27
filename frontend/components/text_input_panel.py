@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import logging
 from collections.abc import Callable
+from typing import Any
 
 import flet as ft
 
@@ -39,7 +40,7 @@ _PROGRESS_RING_STROKE = 2
 def build_text_input_panel(
     leader_name: str,
     on_text_change: Callable[[str], None],
-    on_transform: Callable[[], None],
+    on_transform: Callable[[], Any],
     current_text: str,
     transformed_text: str,
     is_transforming: bool,
@@ -61,10 +62,12 @@ def build_text_input_panel(
     """
 
     # -- Transform click handler ---------------------------------------------
-    def handle_transform(_e: ft.ControlEvent) -> None:
+    async def handle_transform(_e: ft.ControlEvent) -> None:
         """Delegate to the on_transform callback."""
         logger.debug("Transform button clicked for leader: %s", leader_name)
-        on_transform()
+        result = on_transform()
+        if hasattr(result, "__await__"):
+            await result
 
     # -- Character counter ---------------------------------------------------
     char_count = len(current_text)

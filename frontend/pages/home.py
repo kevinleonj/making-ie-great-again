@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import logging
 from dataclasses import dataclass, field
 
@@ -15,6 +16,7 @@ from frontend.components.text_input_panel import build_text_input_panel
 from frontend.config import get_settings
 from frontend.theme import (
     ACCENT_GOLD,
+    ACCENT_GOLD_LIGHT,
     DIVIDER,
     ERROR,
     ON_PRIMARY,
@@ -79,6 +81,7 @@ def build(page: ft.Page) -> list[ft.Control]:
         state.input_text = ""
         state.transformed_text = ""
         state.error_message = None
+        state.audio_url = None
         rebuild()
 
     def select_trump() -> None:
@@ -93,7 +96,7 @@ def build(page: ft.Page) -> list[ft.Control]:
         """Handle text input changes."""
         state.input_text = text
 
-    def on_transform() -> None:
+    async def on_transform() -> None:
         """Call /api/transform and update state with the result."""
         if not state.input_text.strip() or state.selected_leader is None:
             return
@@ -101,20 +104,21 @@ def build(page: ft.Page) -> list[ft.Control]:
         state.error_message = None
         rebuild()
         try:
-            result = get_api_client().transform_text(state.selected_leader, state.input_text)
-            state.transformed_text = result.transformed_text
-        except Exception:
-            logger.exception("Transform API call failed")
-            state.error_message = (
-                "Could not connect to the transformation service. "
-                "Please check that the backend is running and try again."
+            result = await asyncio.to_thread(
+                get_api_client().transform_text,
+                state.selected_leader,
+                state.input_text,
             )
+            state.transformed_text = result.transformed_text
+        except Exception as exc:
+            logger.exception("Transform API call failed")
+            state.error_message = f"Transform failed: {exc}"
             state.transformed_text = ""
         finally:
             state.is_transforming = False
             rebuild()
 
-    def on_generate_audio() -> None:
+    async def on_generate_audio() -> None:
         """Call /api/tts and update state with the audio URL."""
         if not state.transformed_text or state.selected_leader is None:
             return
@@ -123,7 +127,11 @@ def build(page: ft.Page) -> list[ft.Control]:
         rebuild()
         try:
             client = get_api_client()
-            result = client.generate_tts(state.selected_leader, state.transformed_text)
+            result = await asyncio.to_thread(
+                client.generate_tts,
+                state.selected_leader,
+                state.transformed_text,
+            )
             state.audio_url = client.get_audio_url(result.audio_url)
         except Exception as exc:
             logger.exception("TTS API call failed")
@@ -205,35 +213,50 @@ def build(page: ft.Page) -> list[ft.Control]:
         if not state.transformed_text:
             return ft.Container()
 
-        # Button content: optional spinner + label
-        btn_parts: list[ft.Control] = []
-        if state.is_generating:
-            btn_parts.append(ft.ProgressRing(width=20, height=20, stroke_width=2, color=PRIMARY))
-            btn_parts.append(ft.Container(width=8))
-        btn_parts.append(
-            ft.Text(
-                "GENERATE AUDIO",
-                size=16,
-                font_family="Inter",
-                weight=ft.FontWeight.W_600,
-                color=PRIMARY,
-            )
-        )
-
-        gen_btn = ft.Button(
-            content=ft.Row(btn_parts, alignment=ft.MainAxisAlignment.CENTER, spacing=0),
-            bgcolor=ACCENT_GOLD,
-            disabled=state.is_generating,
-            on_click=lambda _e: on_generate_audio(),
-        )
-
-        # Status text or audio player below button
         controls: list[ft.Control] = [
             ft.Container(width=_AUDIO_SECTION_WIDTH, height=1, bgcolor=DIVIDER),
             ft.Container(height=SPACING_MD),
-            ft.Row([gen_btn], alignment=ft.MainAxisAlignment.CENTER),
-            ft.Container(height=SPACING_MD),
         ]
+
+        if state.is_generating:
+            # Progress bar + status text instead of spinner
+            progress_bar = ft.ProgressBar(
+                width=_AUDIO_SECTION_WIDTH,
+                color=ACCENT_GOLD,
+                bgcolor=ACCENT_GOLD_LIGHT,
+            )
+            status_text = ft.Text(
+                "Generating audio (this takes 15 to 30 seconds)...",
+                size=14,
+                font_family="Inter",
+                italic=True,
+                color=ON_SURFACE,
+            )
+            controls.append(progress_bar)
+            controls.append(ft.Container(height=SPACING_MD))
+            controls.append(status_text)
+        else:
+            # Generate button
+            gen_btn = ft.Button(
+                content=ft.Row(
+                    controls=[
+                        ft.Text(
+                            "GENERATE AUDIO",
+                            size=16,
+                            font_family="Inter",
+                            weight=ft.FontWeight.W_600,
+                            color=PRIMARY,
+                        ),
+                    ],
+                    alignment=ft.MainAxisAlignment.CENTER,
+                    spacing=0,
+                ),
+                bgcolor=ACCENT_GOLD,
+                on_click=on_generate_audio,
+            )
+            controls.append(ft.Row([gen_btn], alignment=ft.MainAxisAlignment.CENTER))
+
+        controls.append(ft.Container(height=SPACING_MD))
 
         if state.audio_url:
             player = build_audio_player(state.audio_url, page)
@@ -255,9 +278,6 @@ def build(page: ft.Page) -> list[ft.Control]:
 
     def _populate() -> None:
         """Populate the content column from current state."""
-        # Remove previous audio controls from page overlay to prevent stacking
-        page.overlay.clear()
-        page.update()
         content_column.controls.clear()
         header = build_page_header(title="MakingIEGreatAgain", subtitle="Voice Cloning Demo")
         content_column.controls.extend([header, build_zone_1(), build_zone_2(), build_zone_3()])
